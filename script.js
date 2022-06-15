@@ -24,6 +24,9 @@ function computerDecide(){
     }
 }
 /* pseudo function getThrows: Should get new throws from the player and the computer
+    Have a variable store the user input
+    Have a variable store the modified user input
+    Have a variable store the computer's choice
  */
 function getNewThrows(){
     playerSelection = prompt("What will you throw?...");
@@ -31,13 +34,10 @@ function getNewThrows(){
     computerSelection = computerDecide();
 }
 /* pseudo function getOutcomeOfRound: Should return a new outcome of a round of rock, paper, scissors between the player and computer
-    Create a variable that will hold user prompt input
-    Create a variable that will hold the computer's choice
-    Create a variable that will hold the user's modified input
-    Output to console the computer's choice
-    Output to console the user's modified input
+    Get new throws from the player and computer
+    Check if the player cancelled the game
     Evaluate if the player tied, won, or lost against the robot
-    Return a statement according to the outcome
+    Return a statement according to the outcome of the round
  */
 function getOutcomeOfRound(){
     getNewThrows();
@@ -63,7 +63,7 @@ function getOutcomeOfRound(){
             return "invalid";
     }
 }
-/* pseudo function manageRound: Prints outcome of a round as a string
+/* pseudo function manageRoundDetails: Shows the player the outcome of the round and the current score standings
     Create an integer variable to hold the score of the player
     Create an integer variable to hold the score of the computer
     IF outcome of a round is a tie:
@@ -75,7 +75,7 @@ function getOutcomeOfRound(){
         Log to the console that it's a win
         Return a statement that shows the score of the player and the score of the computer
  */
-function manageRound(outcome){
+function manageRoundDetails(outcome){
     switch(outcome){
         case "Tie":
             console.log("It's a tie! Throw another one out!");
@@ -120,11 +120,17 @@ function modifySelection(selection){
     rest_of_selection = selection.slice(1).toLowerCase();
     return first_letter_capitalized + rest_of_selection;
 }
-
+/* function game: Plays a game of rock, paper, scissors between the computer and player for up to 5 rounds
+    Show the outcome of a round with all the relevant details of who won, who lost, and what the current score is
+    IF the game is cancelled:
+        Stop the game
+    IF the player didn't give a valid input:
+        Make them repeat the round until they throw a valid hand
+     */
 function game(){
     for (let i = 1; i <= 5; i++) {
         let new_outcome = getOutcomeOfRound();
-        let round_details = manageRound(new_outcome);
+        let round_details = manageRoundDetails(new_outcome);
         console.log(new_outcome);
         console.log(round_details);
         if(round_details == "stop") break;
