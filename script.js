@@ -142,5 +142,5 @@ function game(){
         i -= adjustRoundCounter(new_outcome);
         console.log(i);
      }
-     determineWinner(player_score, computer_score);
+     console.log(determineWinner(player_score, computer_score));
 }
