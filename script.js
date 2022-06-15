@@ -120,21 +120,27 @@ function modifySelection(selection){
     rest_of_selection = selection.slice(1).toLowerCase();
     return first_letter_capitalized + rest_of_selection;
 }
+/* function determineWinner: returns string that displays winner of the whole game */
+function determineWinner(score_of_player, score_of_computer){
+    return (score_of_player > score_of_computer) ? "Player wins!" : "Computer wins!";
+}
 /* function game: Plays a game of rock, paper, scissors between the computer and player for up to 5 rounds
-    Show the outcome of a round with all the relevant details of who won, who lost, and what the current score is
+    Show the outcome of each round with all the relevant details of who won, who lost, and what the current score is
     IF the game is cancelled:
         Stop the game
     IF the player didn't give a valid input:
         Make them repeat the round until they throw a valid hand
+    Show the outcome of the final game winner 
      */
 function game(){
     for (let i = 1; i <= 5; i++) {
         let new_outcome = getOutcomeOfRound();
-        let round_details = manageRoundDetails(new_outcome);
+        var round_details = manageRoundDetails(new_outcome);
         console.log(new_outcome);
         console.log(round_details);
-        if(round_details == "stop") break;
+        if(round_details == "stop") return;
         i -= adjustRoundCounter(new_outcome);
         console.log(i);
      }
+     determineWinner(player_score, computer_score);
 }
