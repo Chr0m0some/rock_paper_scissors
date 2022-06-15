@@ -27,25 +27,26 @@ function computerDecide(){
     Have a variable store the user input
     Have a variable store the modified user input
     Have a variable store the computer's choice
+    Check if the player cancelled the game instead of throwing a hand
  */
 function getNewThrows(){
     playerSelection = prompt("What will you throw?...");
-    playerSelection_modified = modifySelection(playerSelection);
     computerSelection = computerDecide();
-}
-/* pseudo function getOutcomeOfRound: Should return a new outcome of a round of rock, paper, scissors between the player and computer
-    Get new throws from the player and computer
-    Check if the player cancelled the game
-    Evaluate if the player tied, won, or lost against the robot
-    Return a statement according to the outcome of the round
- */
-function getOutcomeOfRound(){
-    getNewThrows();
 
     if (playerSelection === null){
         return "cancelled";
         console.log("cancelled");
     } 
+
+    playerSelection_modified = modifySelection(playerSelection);
+}
+/* pseudo function getOutcomeOfRound: Should return a new outcome of a round of rock, paper, scissors between the player and computer
+    Get new throws from the player and computer
+    Evaluate if the player tied, won, or lost against the robot
+    Return a statement according to the outcome of the round
+ */
+function getOutcomeOfRound(){
+    let new_throws = getNewThrows();
 
     console.log(playerSelection_modified);
     console.log(computerSelection);
@@ -58,6 +59,8 @@ function getOutcomeOfRound(){
             return "Win";
         case (playerSelection_modified == "Paper" && computerSelection == "Scissors" || playerSelection_modified == "Scissors" && computerSelection == "Rock" || playerSelection_modified == "Rock" && computerSelection == "Paper"):
             return "Lose";
+        case new_throws == "cancelled":
+            return "Cancelled";
         default:
             console.log("invalid");
             return "invalid";
