@@ -1,28 +1,33 @@
-/* 
-
-In our UI, the player should be able to play the game by clicking on buttons rather than typing their answer in a prompt.
-For now, remove the logic that plays exactly five rounds.
-Create three buttons, one for each selection. Add an event listener to the buttons that call your playRound function with the correct playerSelection every time a button is clicked. (you can keep the console.logs for this step)
-Add a div for displaying results and change all of your console.logs into DOM methods.
-Display the running score, and announce a winner of the game once one player reaches 5 points.
-You will likely have to refactor (rework/rewrite) your original code to make it work for this. That’s OK! Reworking old code is an important part of a programmer’s life.
-Once you’re all done with your UI and made sure everything’s satisfactory, commit your changes to the rps-ui branch.
-
-
-*/
 let playerSelection;
 let playerSelection_modified;
 let computerSelection;
 
 let player_score = 0;
 let computer_score = 0;
+let round_counter = 0;
 
 const hands = document.querySelectorAll('button');
-hands.forEach(hand => hand.addEventListener('click', startRound));
+hands.forEach(hand => hand.addEventListener('click', playRound));
 
 const running_score = document.querySelector('.running-score');
+const result_text = document.querySelector('.results');
+const winner_text = document.querySelector('.winner');
+/* 
 
-function startRound(e){
+function playRound:
+    Get the hand choices of the player and computer and store them into variables
+    Capitalize the player's hand choice
+    Get and show the outcome of a round between the player and computer's choices including: the running scores and the hands that were thrown
+    IF the outcome is a tie:
+        The code should not adjust the round counter
+    
+    Any other outcome should adjust the round counter
+    IF the round counter hits five:
+        Determine and show winner
+        Reset the game
+
+*/
+function playRound(e){
     playerSelection = e.target.className;
     playerSelection_modified = modifySelection(playerSelection);
     computerSelection = computerDecide();
@@ -30,15 +35,44 @@ function startRound(e){
     console.log(playerSelection_modified);
     console.log(computerSelection)
 
-    running_score.textContent =  manageRoundDetails(getOutcomeOfRound(playerSelection_modified, computerSelection));
-}
+    let new_outcome = getOutcomeOfRound(playerSelection_modified, computerSelection);
+    running_score.textContent = `Player Score: ${player_score} Computer Score: ${computer_score}`;
+    result_text.textContent = new_outcome;
+    
+    if (new_outcome === "It's a tie! Throw another one out!") return;
 
-/* Pseudo function computerDecide: Should return a throw from the computer
+    round_counter++;
+    if (round_counter === 5) {
+        console.log(determineWinner(player_score, computer_score));
+        winner_text.textContent = determineWinner(player_score, computer_score);
+        resetGame();
+    }
+}
+/* 
+
+function resetGame:
+    Set round_counter to 0
+    Set all scores to 0
+    Display a zero'd out running_score
+    Clear the result_text to a text that signals another game has started
+
+*/
+function resetGame(){
+    round_counter = 0;
+    player_score = 0;
+    computer_score = 0;
+    running_score.textContent = `Player Score: ${player_score} Computer Score: ${computer_score}`
+    result_text.textContent = "Throw something!";
+}
+/* 
+
+function computerDecide: Should return a throw from the computer
     Get random number from 1 - 3
     IF random number is equal to 1:
         return rock
     IF random number is equal to 2:
         return paper...
+
 */
 function computerDecide(){
     let random_num = Math.floor(Math.random() * 3) + 1;
@@ -51,34 +85,34 @@ function computerDecide(){
             return "Scissors";
     }
 }
-/* pseudo function getThrows: Should get new throws from the player and the computer
-    Have a variable store the user input
-    Have a variable store the modified user input
-    Have a variable store the computer's choice
-    Check if the player cancelled the game instead of throwing a hand
- */
+/* 
 
-/* pseudo function getOutcomeOfRound: Should return a new outcome of a round of rock, paper, scissors between the player and computer
+function getOutcomeOfRound: Should return a new outcome of a round of rock, paper, scissors between the player and computer
     Get new throws from the player and computer
     Evaluate if the player tied, won, or lost against the robot
     Return a statement according to the outcome of the round
+
  */
-function getOutcomeOfRound(playerSelection, computerSelection){
+function getOutcomeOfRound(playerHand, computerHand){
 
     switch(true){
-        case playerSelection == computerSelection:
-            return "Tie"
-        case (playerSelection == "Paper" && computerSelection == "Rock" || playerSelection == "Scissors" && computerSelection == "Paper" || playerSelection == "Rock" && computerSelection == "Scissors"):
-            return "Win";
-        case (playerSelection == "Paper" && computerSelection == "Scissors" || playerSelection == "Scissors" && computerSelection == "Rock" || playerSelection == "Rock" && computerSelection == "Paper"):
-            return "Lose";
+        case playerHand == computerHand:
+            return "It's a tie! Throw another one out!"
+        case (playerHand == "Paper" && computerHand == "Rock" || playerHand == "Scissors" && computerHand == "Paper" || playerHand == "Rock" && computerHand == "Scissors"):
+            ++player_score;
+            return `You win! ${playerSelection} beats ${computerHand}`;
+        case (playerHand == "Paper" && computerHand == "Scissors" || playerHand == "Scissors" && computerHand == "Rock" || playerHand == "Rock" && computerHand == "Paper"):
+            ++computer_score;
+            return `You lose! ${computerSelection} beats ${playerSelection_modified}`;
         default:
             console.log("invalid");
             return "invalid";
     }
     
 }
-/* pseudo function manageRoundDetails: Shows the player the outcome of the round and the current score standings
+/* 
+
+function manageRoundDetails: Shows the player the outcome of the round and the current score standings
     Create an integer variable to hold the score of the player
     Create an integer variable to hold the score of the computer
     IF outcome of a round is a tie:
@@ -89,6 +123,7 @@ function getOutcomeOfRound(playerSelection, computerSelection){
     ELSE IF outcome is a loss:
         Log to the console that it's a win
         Return a statement that shows the score of the player and the score of the computer
+
  */
 function manageRoundDetails(outcome){
     switch(outcome){
@@ -112,23 +147,17 @@ function manageRoundDetails(outcome){
     }
     return `Player Score: ${player_score} Computer Score: ${computer_score}`;
 }
-/* pseudo function adjustRoundCounter: Returns an adjustment for the round counter if the outcome of the round is a tie or the player didn't give a valid input 
-    IF outcome of a round was a tie or invalid:
-        Return 1
-    ELSE:
-        Return 0
- */
-function adjustRoundCounter(outcome){
-    if(outcome === "Tie" || outcome === "invalid") return 1;
-    return 0;
-}
-/* pseudo function modifySelection: returns a capitalized version of a word that it takes in as an argument
+
+/*
+
+function modifySelection: returns a capitalized version of a word that it takes in as an argument
     IF the argument is that of type string then:
         Capitalize the first character of the string
         Slice off the rest of the string and turn it all lowercase
         Return a complete, concatenated string
     IF the argument is not of the string type then:
         Return a string that signals to the user that it's not a valid input 
+        
  */
 function modifySelection(selection){
     first_letter_capitalized = selection.charAt(0).toUpperCase();
@@ -138,24 +167,4 @@ function modifySelection(selection){
 /* function determineWinner: returns string that displays winner of the whole game */
 function determineWinner(score_of_player, score_of_computer){
     return (score_of_player > score_of_computer) ? "Player wins!" : "Computer wins!";
-}
-/* function game: Plays a game of rock, paper, scissors between the computer and player for up to 5 rounds
-    Show the outcome of each round with all the relevant details of who won, who lost, and what the current score is
-    IF the game is cancelled:
-        Stop the game
-    IF the player didn't give a valid input:
-        Make them repeat the round until they throw a valid hand
-    Show the outcome of the final game winner 
-     */
-function game(){
-    for (let i = 1; i <= 5; i++) {
-        let new_outcome = getOutcomeOfRound();
-        var round_details = manageRoundDetails(new_outcome);
-        console.log(new_outcome);
-        console.log(round_details);
-        if(round_details == "stop") return;
-        i -= adjustRoundCounter(new_outcome);
-        console.log(i);
-     }
-     console.log(determineWinner(player_score, computer_score));
 }
