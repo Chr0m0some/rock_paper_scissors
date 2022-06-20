@@ -1,9 +1,37 @@
+/* 
+
+In our UI, the player should be able to play the game by clicking on buttons rather than typing their answer in a prompt.
+For now, remove the logic that plays exactly five rounds.
+Create three buttons, one for each selection. Add an event listener to the buttons that call your playRound function with the correct playerSelection every time a button is clicked. (you can keep the console.logs for this step)
+Add a div for displaying results and change all of your console.logs into DOM methods.
+Display the running score, and announce a winner of the game once one player reaches 5 points.
+You will likely have to refactor (rework/rewrite) your original code to make it work for this. That’s OK! Reworking old code is an important part of a programmer’s life.
+Once you’re all done with your UI and made sure everything’s satisfactory, commit your changes to the rps-ui branch.
+
+
+*/
 let playerSelection;
 let playerSelection_modified;
 let computerSelection;
 
 let player_score = 0;
 let computer_score = 0;
+
+const hands = document.querySelectorAll('button');
+hands.forEach(hand => hand.addEventListener('click', startRound));
+
+const running_score = document.querySelector('.running-score');
+
+function startRound(e){
+    playerSelection = e.target.className;
+    playerSelection_modified = modifySelection(playerSelection);
+    computerSelection = computerDecide();
+
+    console.log(playerSelection_modified);
+    console.log(computerSelection)
+
+    running_score.textContent =  manageRoundDetails(getOutcomeOfRound(playerSelection_modified, computerSelection));
+}
 
 /* Pseudo function computerDecide: Should return a throw from the computer
     Get random number from 1 - 3
@@ -29,42 +57,26 @@ function computerDecide(){
     Have a variable store the computer's choice
     Check if the player cancelled the game instead of throwing a hand
  */
-function getNewThrows(){
-    playerSelection = prompt("What will you throw?...");
-    computerSelection = computerDecide();
 
-    if (playerSelection === null){
-        return "cancelled";
-        console.log("cancelled");
-    } 
-
-    playerSelection_modified = modifySelection(playerSelection);
-}
 /* pseudo function getOutcomeOfRound: Should return a new outcome of a round of rock, paper, scissors between the player and computer
     Get new throws from the player and computer
     Evaluate if the player tied, won, or lost against the robot
     Return a statement according to the outcome of the round
  */
-function getOutcomeOfRound(){
-    let new_throws = getNewThrows();
-
-    console.log(playerSelection_modified);
-    console.log(computerSelection);
-    console.log(typeof playerSelection);
+function getOutcomeOfRound(playerSelection, computerSelection){
 
     switch(true){
-        case playerSelection_modified == computerSelection:
+        case playerSelection == computerSelection:
             return "Tie"
-        case (playerSelection_modified == "Paper" && computerSelection == "Rock" || playerSelection_modified == "Scissors" && computerSelection == "Paper" || playerSelection_modified == "Rock" && computerSelection == "Scissors"):
+        case (playerSelection == "Paper" && computerSelection == "Rock" || playerSelection == "Scissors" && computerSelection == "Paper" || playerSelection == "Rock" && computerSelection == "Scissors"):
             return "Win";
-        case (playerSelection_modified == "Paper" && computerSelection == "Scissors" || playerSelection_modified == "Scissors" && computerSelection == "Rock" || playerSelection_modified == "Rock" && computerSelection == "Paper"):
+        case (playerSelection == "Paper" && computerSelection == "Scissors" || playerSelection == "Scissors" && computerSelection == "Rock" || playerSelection == "Rock" && computerSelection == "Paper"):
             return "Lose";
-        case new_throws == "cancelled":
-            return "Cancelled";
         default:
             console.log("invalid");
             return "invalid";
     }
+    
 }
 /* pseudo function manageRoundDetails: Shows the player the outcome of the round and the current score standings
     Create an integer variable to hold the score of the player
